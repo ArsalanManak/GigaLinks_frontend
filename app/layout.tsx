@@ -1,13 +1,26 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Amiri, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
 import { ThemeProvider } from "../components/ThemeProvider";
+import { LayoutWrapper } from "../components/layout/LayoutWrapper";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const amiri = Amiri({
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-amiri",
+  display: "swap",
+});
+
+const notoNastaliq = Noto_Nastaliq_Urdu({
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-noto-nastaliq",
   display: "swap",
 });
 
@@ -36,12 +49,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${amiri.variable} ${notoNastaliq.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
         </ThemeProvider>
       </body>
     </html>

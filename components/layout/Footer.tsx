@@ -20,17 +20,7 @@ export default function Footer() {
             <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-6">
               Delivering reliable tower installation, FM radio, and solar internet solutions across Pakistan with world-class infrastructure and support.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-[var(--surface-card)] flex items-center justify-center text-white hover:bg-[var(--green)] hover:text-[var(--navy-deep)] transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-[var(--surface-card)] flex items-center justify-center text-white hover:bg-[var(--green)] hover:text-[var(--navy-deep)] transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-[var(--surface-card)] flex items-center justify-center text-white hover:bg-[var(--green)] hover:text-[var(--navy-deep)] transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-              </a>
-            </div>
+            {/* social icons removed from here — moved to footer center */}
           </div>
 
           {/* Column 2 */}
@@ -52,7 +42,6 @@ export default function Footer() {
               <li><Link href="/about" className="hover:text-[var(--green)] transition-colors">About Us</Link></li>
               <li><Link href="/projects" className="hover:text-[var(--green)] transition-colors">Our Projects</Link></li>
               <li><Link href="/contact" className="hover:text-[var(--green)] transition-colors">Contact</Link></li>
-              <li><Link href="/get-quote" className="hover:text-[var(--green)] transition-colors">Get a Quote</Link></li>
             </ul>
           </div>
 
@@ -62,22 +51,60 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-[var(--text-secondary)]">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-[var(--green)] shrink-0 mt-0.5" />
-                <span>Office No. 5, Tech Plaza, Faisalabad, Pakistan</span>
+                <span>Faisalabad, Pakistan</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-[var(--green)] shrink-0" />
-                <span>+92 300 0000000</span>
+                <span>Call: <a href="tel:+923005568086" className="hover:text-[var(--green)]">+92 300 5568086</a></span>
+              </li>
+              <li className="flex items-center gap-3">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/960px-WhatsApp.svg.png" alt="WhatsApp" className="w-5 h-5" />
+                <span>WhatsApp: <a href="https://wa.me/923469595593" target="_blank" rel="noreferrer" className="hover:text-[var(--green)]">+92 346 9595593</a></span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-[var(--green)] shrink-0" />
-                <span>info@gigalinks.pk</span>
+                <span><a href="mailto:gigalink00@gmail.com" className="hover:text-[var(--green)]">gigalink00@gmail.com</a></span>
               </li>
+              {/* social icons removed from here — moved to bottom center */}
             </ul>
+          </div>
+        </div>
+
+        {/* centered social icons row (responsive grid) */}
+        <div className="max-w-3xl mx-auto mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-items-center">
+            <a href="https://www.facebook.com/profile.php?id=61587694760831&sk=reels_tab" target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-2">
+              <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center transition-all duration-300 group-hover:scale-105 shadow-sm">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/04/Facebook_f_logo_%282021%29.svg/3840px-Facebook_f_logo_%282021%29.svg.png" alt="Facebook" className="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
+              </span>
+              <span className="text-[var(--text-secondary)] text-[0.62rem] uppercase tracking-[0.18em] hidden sm:inline">Facebook</span>
+            </a>
+            <a href="https://www.instagram.com/hamidali426/" target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-2">
+              <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center transition-all duration-300 group-hover:scale-105 shadow-sm">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/3840px-Instagram_logo_2016.svg.png" alt="Instagram" className="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
+              </span>
+              <span className="text-[var(--text-secondary)] text-[0.62rem] uppercase tracking-[0.18em] hidden sm:inline">Instagram</span>
+            </a>
+            <a href="https://www.youtube.com/@hdrawar67" target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-2">
+              <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center transition-all duration-300 group-hover:scale-105 shadow-sm">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/3840px-YouTube_full-color_icon_%282017%29.svg.png" alt="YouTube" className="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
+              </span>
+              <span className="text-[var(--text-secondary)] text-[0.62rem] uppercase tracking-[0.18em] hidden sm:inline">YouTube</span>
+            </a>
+            <a href="https://www.tiktok.com/@hamidali118900" target="_blank" rel="noreferrer" className="group flex flex-col items-center gap-2">
+              <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center transition-all duration-300 group-hover:scale-105 shadow-sm">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStHwMu0iib5nr3K--gkKVgH5gS-uSphzNaNQ&s" alt="TikTok" className="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
+              </span>
+              <span className="text-[var(--text-secondary)] text-[0.62rem] uppercase tracking-[0.18em] hidden sm:inline">TikTok</span>
+            </a>
           </div>
         </div>
 
         <div className="border-t border-[var(--glass-border)] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[var(--text-muted)]">
           <p>© {new Date().getFullYear()} GigaLinkPak PVT LTD. All rights reserved.</p>
+          <Link href="/auth/login" className="hover:text-[var(--green)] transition-colors">
+            Admin Login
+          </Link>
         </div>
       </div>
     </footer>

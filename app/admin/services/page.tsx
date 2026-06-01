@@ -3,17 +3,17 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import api from "../../../lib/api";
 import { Plus, Pencil, Trash2, ExternalLink, Loader2 } from "lucide-react";
-import type { Project } from "../../../types";
+import type { Service } from "../../../types";
 
-export default function AdminProjects() {
-  const [projects, setProjects] = useState<Project[]>([]);
+export default function AdminServices() {
+  const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const fetchProjects = async () => {
+  const fetchServices = async () => {
     try {
-      const res = await api.get("/projects");
-      setProjects(res.data);
+      const res = await api.get("/services");
+      setServices(res.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -21,16 +21,16 @@ export default function AdminProjects() {
     }
   };
 
-  useEffect(() => { fetchProjects(); }, []);
+  useEffect(() => { fetchServices(); }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this project?")) return;
+    if (!confirm("Are you sure you want to delete this service?")) return;
     setDeleting(id);
     try {
-      await api.delete(`/projects/${id}`);
-      setProjects(projects.filter(p => p.id !== id));
+      await api.delete(`/services/${id}`);
+      setServices(services.filter(s => s.id !== id));
     } catch (err) {
-      alert("Failed to delete project");
+      alert("Failed to delete service");
     } finally {
       setDeleting(null);
     }
@@ -48,63 +48,63 @@ export default function AdminProjects() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white">Projects</h1>
-          <p className="text-gray-400 mt-1">{projects.length} total projects</p>
+          <h1 className="text-3xl font-bold text-white">Services</h1>
+          <p className="text-gray-400 mt-1">{services.length} total services</p>
         </div>
         <Link
-          href="/admin/projects/create"
+          href="/admin/services/create"
           className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition shadow-lg shadow-emerald-500/20"
         >
-          <Plus size={20} /> New Project
+          <Plus size={20} /> New Service
         </Link>
       </div>
 
-      {projects.length === 0 ? (
+      {services.length === 0 ? (
         <div className="bg-[#111827] rounded-2xl border border-gray-800 p-12 text-center">
-          <p className="text-gray-400 text-lg">No projects yet. Create your first project!</p>
+          <p className="text-gray-400 text-lg">No services yet. Create your first service!</p>
         </div>
       ) : (
         <div className="bg-[#111827] rounded-2xl border border-gray-800 overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Project</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Type</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">City</th>
+                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Service</th>
+                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Slug</th>
+                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sub Services</th>
                 <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Media</th>
                 <th className="text-right px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
-              {projects.map((project) => (
-                <tr key={project.id} className="hover:bg-white/[0.02] transition">
+              {services.map((service) => (
+                <tr key={service.id} className="hover:bg-white/[0.02] transition">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      {project.cloudinary_urls?.[0] ? (
-                        <img src={project.cloudinary_urls[0]} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                      {(service.image_url || service.hero_image) ? (
+                        <img src={service.image_url || service.hero_image} alt="" className="w-10 h-10 rounded-lg object-cover" />
                       ) : (
                         <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center text-gray-500">
                           <ExternalLink size={16} />
                         </div>
                       )}
-                      <div className="text-white font-medium">{project.title}</div>
+                      <div className="text-white font-medium">{service.title}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-gray-400">{project.service_type}</td>
-                  <td className="px-6 py-4 text-gray-400">{project.city}</td>
+                  <td className="px-6 py-4 text-gray-400 font-mono text-sm">{service.slug}</td>
+                  <td className="px-6 py-4 text-gray-400">{service.sub_services?.length || 0}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
-                      {project.cloudinary_urls?.length > 0 && <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-lg">{project.cloudinary_urls.length} img</span>}
-                      {project.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-lg">Video</span>}
+                      {(service.image_url || service.hero_image) && <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-lg">Image</span>}
+                      {service.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-lg">Video</span>}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/admin/projects/edit/${project.id}`} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
+                      <Link href={`/admin/services/edit/${service.id}`} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
                         <Pencil size={16} />
                       </Link>
-                      <button onClick={() => handleDelete(project.id!)} disabled={deleting === project.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
-                        {deleting === project.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                      <button onClick={() => handleDelete(service.id!)} disabled={deleting === service.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
+                        {deleting === service.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                       </button>
                     </div>
                   </td>
