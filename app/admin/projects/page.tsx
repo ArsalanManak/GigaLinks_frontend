@@ -56,17 +56,15 @@ export default function AdminProjects() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-[100vw] overflow-hidden">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white">Projects</h1>
-          <p className="text-gray-400 mt-1">{projects.length} total projects</p>
+          <p className="text-gray-400 mt-1">Manage your portfolio items</p>
         </div>
-        <Link
-          href="/admin/projects/create"
-          className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition shadow-lg shadow-emerald-500/20"
-        >
-          <Plus size={20} /> New Project
+        <Link href="/admin/projects/create" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-500/20 w-full sm:w-auto justify-center">
+          <Plus size={20} />
+          Add Project
         </Link>
       </div>
 
