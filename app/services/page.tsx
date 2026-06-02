@@ -52,10 +52,18 @@ export default function ServicesPage() {
     <div className="flex flex-col min-h-screen">
       {/* ═══ HERO SECTION ═══ */}
       <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden">
-        {/* Animated Background */}
+        {/* Animated Video Background */}
         <div className="absolute inset-0 bg-[#060D1E]"></div>
-        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#060D1E]/50 via-transparent to-[#060D1E] pointer-events-none"></div>
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="absolute inset-0 w-full h-full object-cover opacity-50 pointer-events-none mix-blend-screen"
+        >
+          <source src="/earth-network.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#060D1E]/60 via-[#060D1E]/30 to-[#060D1E] pointer-events-none"></div>
         
         {/* Floating Decorative Elements */}
         <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
