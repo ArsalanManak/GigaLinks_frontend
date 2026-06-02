@@ -135,7 +135,7 @@ export default function Home() {
             {/* Service 1: Internet Tower */}
             <motion.div 
               initial={{ opacity: 0, x: -50, y: -20, rotate: -12 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: -8, y: [0, -10, 0] }}
+              animate={{ opacity: 1, x: 0, rotate: -8, y: [0, -10, 0] }}
               transition={{ opacity: { duration: 0.8 }, x: { duration: 0.8 }, rotate: { duration: 0.8 }, y: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
               className="absolute top-[10%] left-[5%] w-48 xl:w-56 h-64 xl:h-72 rounded-[1.5rem] overflow-hidden shadow-2xl shadow-[var(--green)]/10 border-[4px] border-white/10"
             >
@@ -149,7 +149,7 @@ export default function Home() {
             {/* Service 2: FM Radio */}
             <motion.div 
               initial={{ opacity: 0, x: -30, y: 50, rotate: -4 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: -2, y: [0, -12, 0] }}
+              animate={{ opacity: 1, x: 0, rotate: -2, y: [0, -12, 0] }}
               transition={{ opacity: { duration: 0.8, delay: 0.2 }, x: { duration: 0.8, delay: 0.2 }, rotate: { duration: 0.8, delay: 0.2 }, y: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 } }}
               className="absolute bottom-[15%] right-[-10%] xl:right-[0%] w-40 xl:w-48 h-56 xl:h-64 rounded-[1.5rem] overflow-hidden shadow-2xl border-[4px] border-white/10 z-10"
             >
@@ -166,7 +166,7 @@ export default function Home() {
             {/* Service 3: Solar Solutions */}
             <motion.div 
               initial={{ opacity: 0, x: 50, y: -20, rotate: 12 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: 8, y: [0, -10, 0] }}
+              animate={{ opacity: 1, x: 0, rotate: 8, y: [0, -10, 0] }}
               transition={{ opacity: { duration: 0.8 }, x: { duration: 0.8 }, rotate: { duration: 0.8 }, y: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 } }}
               className="absolute top-[10%] right-[5%] w-48 xl:w-56 h-64 xl:h-72 rounded-[1.5rem] overflow-hidden shadow-2xl shadow-blue-500/10 border-[4px] border-white/10"
             >
@@ -180,7 +180,7 @@ export default function Home() {
             {/* Service 4: Maintenance */}
             <motion.div 
               initial={{ opacity: 0, x: 30, y: 50, rotate: 4 }}
-              animate={{ opacity: 1, x: 0, y: 0, rotate: 2, y: [0, -12, 0] }}
+              animate={{ opacity: 1, x: 0, rotate: 2, y: [0, -12, 0] }}
               transition={{ opacity: { duration: 0.8, delay: 0.2 }, x: { duration: 0.8, delay: 0.2 }, rotate: { duration: 0.8, delay: 0.2 }, y: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 } }}
               className="absolute bottom-[15%] left-[-10%] xl:left-[0%] w-40 xl:w-48 h-56 xl:h-64 rounded-[1.5rem] overflow-hidden shadow-2xl border-[4px] border-white/10 z-10"
             >
