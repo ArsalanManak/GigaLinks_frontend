@@ -135,7 +135,7 @@ export default function Home() {
         <div className="relative z-10 max-w-[100rem] mx-auto w-full px-4 sm:px-6 pt-10 sm:pt-16 flex flex-col justify-center items-center min-h-[600px] lg:min-h-[700px]">
           
           {/* LEFT SIDE (2 Services) */}
-          <div className="hidden lg:block absolute left-4 xl:left-12 w-64 xl:w-80 h-full pointer-events-none z-0">
+          <div className="hidden xl:block absolute left-4 xl:left-12 w-64 xl:w-80 h-full pointer-events-none z-0">
             {/* Service 1: Internet Tower */}
             <motion.div 
               initial={{ opacity: 0, x: -50, y: -20, rotate: -12 }}
@@ -166,7 +166,7 @@ export default function Home() {
           </div>
 
           {/* RIGHT SIDE (2 Services) */}
-          <div className="hidden lg:block absolute right-4 xl:right-12 w-64 xl:w-80 h-full pointer-events-none z-0">
+          <div className="hidden xl:block absolute right-4 xl:right-12 w-64 xl:w-80 h-full pointer-events-none z-0">
             {/* Service 3: Solar Solutions */}
             <motion.div 
               initial={{ opacity: 0, x: 50, y: -20, rotate: 12 }}
@@ -247,7 +247,7 @@ export default function Home() {
           </div>
 
           {/* MOBILE SERVICES GRID (Shows only on mobile/tablet below text) */}
-          <div className="lg:hidden w-full max-w-2xl mx-auto grid grid-cols-2 gap-3 mt-10 relative z-10">
+          <div className="xl:hidden w-full max-w-2xl mx-auto grid grid-cols-2 gap-3 mt-10 relative z-10">
             {/* Card 1 */}
             <div className="rounded-xl overflow-hidden shadow-lg border-2 border-white/10 relative h-32 sm:h-40">
               <div className="absolute inset-0 bg-black/20 z-10"></div>
