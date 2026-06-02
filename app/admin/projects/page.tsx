@@ -73,55 +73,96 @@ export default function AdminProjects() {
           <p className="text-gray-400 text-lg">No projects yet. Create your first project!</p>
         </div>
       ) : (
-        <div className="bg-[#111827] rounded-2xl border border-gray-800 overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-800">
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Project</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Type</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">City</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Media</th>
-                <th className="text-right px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800">
-              {projects.map((project) => (
-                <tr key={project.id} className="hover:bg-white/[0.02] transition">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      {project.cloudinary_urls?.[0] ? (
-                        <img src={project.cloudinary_urls[0]} alt="" className="w-10 h-10 rounded-lg object-cover" />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center text-gray-500">
-                          <ExternalLink size={16} />
-                        </div>
-                      )}
-                      <div className="text-white font-medium">{project.title}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-gray-400">{project.service_type}</td>
-                  <td className="px-6 py-4 text-gray-400">{project.city}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      {project.cloudinary_urls?.length > 0 && <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-lg">{project.cloudinary_urls.length} img</span>}
-                      {project.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-lg">Video</span>}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link href={`/admin/projects/edit/${project.id}`} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
-                        <Pencil size={16} />
-                      </Link>
-                      <button onClick={() => confirmDelete(project.id!)} disabled={deleting === project.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
-                        {deleting === project.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                      </button>
-                    </div>
-                  </td>
+        <>
+          {/* ── DESKTOP TABLE (hidden on mobile) ── */}
+          <div className="hidden md:block bg-[#111827] rounded-2xl border border-gray-800 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-800">
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Project</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Type</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">City</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Media</th>
+                  <th className="text-right px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {projects.map((project) => (
+                  <tr key={project.id} className="hover:bg-white/[0.02] transition">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        {project.cloudinary_urls?.[0] ? (
+                          <img src={project.cloudinary_urls[0]} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center text-gray-500">
+                            <ExternalLink size={16} />
+                          </div>
+                        )}
+                        <div className="text-white font-medium">{project.title}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-400">{project.service_type}</td>
+                    <td className="px-6 py-4 text-gray-400">{project.city}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        {project.cloudinary_urls?.length > 0 && <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-lg">{project.cloudinary_urls.length} img</span>}
+                        {project.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-lg">Video</span>}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/admin/projects/edit/${project.id}`} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
+                          <Pencil size={16} />
+                        </Link>
+                        <button onClick={() => confirmDelete(project.id!)} disabled={deleting === project.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
+                          {deleting === project.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ── MOBILE CARDS (hidden on desktop) ── */}
+          <div className="md:hidden space-y-4">
+            {projects.map((project) => (
+              <div key={project.id} className="bg-[#111827] rounded-2xl border border-gray-800 p-4 space-y-3">
+                {/* Header: Image + Title + Actions */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {project.cloudinary_urls?.[0] ? (
+                      <img src={project.cloudinary_urls[0]} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center text-gray-500 shrink-0">
+                        <ExternalLink size={18} />
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="text-white font-semibold text-base truncate">{project.title}</div>
+                      <div className="text-gray-500 text-xs truncate">{project.service_type}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Link href={`/admin/projects/edit/${project.id}`} className="p-2.5 rounded-xl hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
+                      <Pencil size={18} />
+                    </Link>
+                    <button onClick={() => confirmDelete(project.id!)} disabled={deleting === project.id} className="p-2.5 rounded-xl hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
+                      {deleting === project.id ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+                    </button>
+                  </div>
+                </div>
+                {/* Details Row */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  {project.city && <span className="text-xs bg-gray-800 text-gray-300 px-3 py-1.5 rounded-lg">📍 {project.city}</span>}
+                  {project.cloudinary_urls?.length > 0 && <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1.5 rounded-lg">{project.cloudinary_urls.length} images</span>}
+                  {project.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-3 py-1.5 rounded-lg">Video</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Custom Modals */}

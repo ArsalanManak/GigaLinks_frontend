@@ -76,55 +76,96 @@ export default function AdminServices() {
           <p className="text-gray-400 text-lg">No services yet. Create your first service!</p>
         </div>
       ) : (
-        <div className="bg-[#111827] rounded-2xl border border-gray-800 overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-800">
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Service</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Slug</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sub Services</th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Media</th>
-                <th className="text-right px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800">
-              {services.map((service) => (
-                <tr key={service.id} className="hover:bg-white/[0.02] transition">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      {(service.image_url || service.hero_image) ? (
-                        <img src={service.image_url || service.hero_image} alt="" className="w-10 h-10 rounded-lg object-cover" />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center text-gray-500">
-                          <ExternalLink size={16} />
-                        </div>
-                      )}
-                      <div className="text-white font-medium">{service.title}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-gray-400 font-mono text-sm">{service.slug}</td>
-                  <td className="px-6 py-4 text-gray-400">{service.sub_services?.length || 0}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      {(service.image_url || service.hero_image) && <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-lg">Image</span>}
-                      {service.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-lg">Video</span>}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link href={`/admin/services/edit/${service.id}`} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
-                        <Pencil size={16} />
-                      </Link>
-                      <button onClick={() => confirmDelete(service.id!)} disabled={deleting === service.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
-                        {deleting === service.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                      </button>
-                    </div>
-                  </td>
+        <>
+          {/* ── DESKTOP TABLE (hidden on mobile) ── */}
+          <div className="hidden md:block bg-[#111827] rounded-2xl border border-gray-800 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-800">
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Service</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Slug</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sub Services</th>
+                  <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Media</th>
+                  <th className="text-right px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {services.map((service) => (
+                  <tr key={service.id} className="hover:bg-white/[0.02] transition">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        {(service.image_url || service.hero_image) ? (
+                          <img src={service.image_url || service.hero_image} alt="" className="w-10 h-10 rounded-lg object-cover" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center text-gray-500">
+                            <ExternalLink size={16} />
+                          </div>
+                        )}
+                        <div className="text-white font-medium">{service.title}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-gray-400 font-mono text-sm">{service.slug}</td>
+                    <td className="px-6 py-4 text-gray-400">{service.sub_services?.length || 0}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        {(service.image_url || service.hero_image) && <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded-lg">Image</span>}
+                        {service.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-lg">Video</span>}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/admin/services/edit/${service.id}`} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
+                          <Pencil size={16} />
+                        </Link>
+                        <button onClick={() => confirmDelete(service.id!)} disabled={deleting === service.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
+                          {deleting === service.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ── MOBILE CARDS (hidden on desktop) ── */}
+          <div className="md:hidden space-y-4">
+            {services.map((service) => (
+              <div key={service.id} className="bg-[#111827] rounded-2xl border border-gray-800 p-4 space-y-3">
+                {/* Header: Image + Title + Actions */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {(service.image_url || service.hero_image) ? (
+                      <img src={service.image_url || service.hero_image} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-gray-800 flex items-center justify-center text-gray-500 shrink-0">
+                        <ExternalLink size={18} />
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="text-white font-semibold text-base truncate">{service.title}</div>
+                      <div className="text-gray-500 text-xs font-mono truncate">{service.slug}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Link href={`/admin/services/edit/${service.id}`} className="p-2.5 rounded-xl hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
+                      <Pencil size={18} />
+                    </Link>
+                    <button onClick={() => confirmDelete(service.id!)} disabled={deleting === service.id} className="p-2.5 rounded-xl hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
+                      {deleting === service.id ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+                    </button>
+                  </div>
+                </div>
+                {/* Details Row */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="text-xs bg-gray-800 text-gray-300 px-3 py-1.5 rounded-lg">{service.sub_services?.length || 0} sub-services</span>
+                  {(service.image_url || service.hero_image) && <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1.5 rounded-lg">Image</span>}
+                  {service.youtube_url && <span className="text-xs bg-red-500/10 text-red-400 px-3 py-1.5 rounded-lg">Video</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Custom Modals */}
