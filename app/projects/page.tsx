@@ -5,12 +5,6 @@ import { MapPin, Play, Loader2, ZoomIn } from "lucide-react";
 import api from "../../lib/api";
 import MediaModal from "../../components/ui/MediaModal";
 
-const fallbackProjects = [
-  { id: "1", title: "Faisalabad Tower Upgrade", service_type: "Internet Tower", city: "Faisalabad", cloudinary_urls: ["https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"], youtube_url: null, description: null, featured: false },
-  { id: "2", title: "Rural Solar Site", service_type: "Solar Internet", city: "Sialkot", cloudinary_urls: ["https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&q=80"], youtube_url: null, description: null, featured: false },
-  { id: "3", title: "Karachi FM Link", service_type: "FM Radio", city: "Karachi", cloudinary_urls: ["https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=600&q=80"], youtube_url: null, description: null, featured: false },
-];
-
 function getYouTubeEmbedUrl(url: string): string | null {
   if (!url) return null;
   const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]+)/);
@@ -31,9 +25,9 @@ export default function ProjectsPage() {
     (async () => {
       try {
         const res = await api.get("/projects");
-        setProjects(res.data.length > 0 ? res.data : fallbackProjects);
+        setProjects(res.data || []);
       } catch {
-        setProjects(fallbackProjects);
+        setProjects([]);
       } finally {
         setLoading(false);
       }
@@ -70,6 +64,8 @@ export default function ProjectsPage() {
           <div className="flex justify-center py-20">
             <Loader2 className="animate-spin text-[var(--green)]" size={40} />
           </div>
+        ) : projects.length === 0 ? (
+          <div className="text-center py-20 text-gray-500 text-lg">No projects available right now.</div>
         ) : (
           <>
             <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

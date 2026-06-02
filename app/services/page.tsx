@@ -12,49 +12,6 @@ const iconMap: Record<string, any> = {
   Wrench,
 };
 
-const fallbackServices = [
-  {
-    id: "internet-tower-installation",
-    slug: "internet-tower-installation",
-    title: "Internet Tower Installation",
-    description: "Complete site surveys, tower erection, antenna installation and commissioning. We handle everything from foundation to final testing to ensure robust network coverage.",
-    image_url: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80",
-    icon: "Radio",
-    youtube_url: null,
-    sub_services: ["Site Survey & Planning", "Foundation & Civil Works", "Tower Erection", "Antenna Installation", "Testing & Commissioning"]
-  },
-  {
-    id: "fm-radio-installation",
-    slug: "fm-radio-installation",
-    title: "FM Radio Installation",
-    description: "Studio-to-transmitter links, antenna systems, and complete broadcast infrastructure setup for regional and national FM stations.",
-    image_url: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=80",
-    icon: "Radio",
-    youtube_url: null,
-    sub_services: ["STL Setup", "Antenna Arrays", "Transmitter Installation", "Coverage Testing", "Regulatory Compliance"]
-  },
-  {
-    id: "solar-internet-solutions",
-    slug: "solar-internet-solutions",
-    title: "Solar Internet Solutions",
-    description: "Off-grid solar power systems tailored for remote connectivity sites, ensuring your network stays online 24/7 without grid dependency.",
-    image_url: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80",
-    icon: "Sun",
-    youtube_url: null,
-    sub_services: ["Solar Panel Installation", "Battery Bank Sizing", "Inverter Setup", "Remote Monitoring", "Power Optimization"]
-  },
-  {
-    id: "tower-maintenance",
-    slug: "tower-maintenance",
-    title: "Tower Maintenance",
-    description: "Comprehensive painting, earthing, lightning protection, and preventive maintenance services to extend the lifespan of your infrastructure.",
-    image_url: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
-    icon: "Wrench",
-    youtube_url: null,
-    sub_services: ["Anti-corrosion Painting", "Earthing Systems", "Lightning Protection", "Structural Audits", "Preventive Maintenance"]
-  }
-];
-
 function getYouTubeEmbedUrl(url: string): string | null {
   if (!url) return null;
   const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]+)/);
@@ -80,9 +37,9 @@ export default function ServicesPage() {
     (async () => {
       try {
         const res = await api.get("/services");
-        setServices(res.data.length > 0 ? res.data : fallbackServices);
+        setServices(res.data || []);
       } catch {
-        setServices(fallbackServices);
+        setServices([]);
       } finally {
         setLoading(false);
       }
@@ -120,20 +77,23 @@ export default function ServicesPage() {
           <div className="flex justify-center py-20">
             <Loader2 className="animate-spin text-[var(--green)]" size={40} />
           </div>
+        ) : services.length === 0 ? (
+          <div className="text-center py-20 text-gray-500 text-lg">No services available right now.</div>
         ) : (
-          services.map((service, idx) => {
-            const IconComponent = iconMap[service.icon || ""] || Radio;
-            const img = service.image_url || service.hero_image || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80";
-            const embedUrl = service.youtube_url ? getYouTubeEmbedUrl(service.youtube_url) : null;
-            const features = service.sub_services || [];
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+            {services.map((service, idx) => {
+              const IconComponent = iconMap[service.icon || ""] || Radio;
+              const img = service.image_url || service.hero_image || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80";
+              const embedUrl = service.youtube_url ? getYouTubeEmbedUrl(service.youtube_url) : null;
+              const features = service.sub_services || [];
 
-            return (
-              <motion.div 
-                key={service.id || idx}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, margin: "-100px" }}
-                variants={fadeUp}
+              return (
+                <motion.div 
+                  key={service.id || idx}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: "-100px" }}
+                  variants={fadeUp}
                 className={`flex flex-col ${idx % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 items-center glass-card p-6 lg:p-10`}
               >
                 {/* Image / Video Preview */}
@@ -189,7 +149,8 @@ export default function ServicesPage() {
                 </div>
               </motion.div>
             );
-          })
+          })}
+          </div>
         )}
       </section>
 

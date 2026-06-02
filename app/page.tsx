@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
-import { ChevronDown, Radio, Sun, Wrench, Star, Shield, Headphones, MapPin, Award } from "lucide-react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { ChevronDown, ChevronLeft, ChevronRight, Radio, Sun, Wrench, Star, Shield, Headphones, MapPin, Award } from "lucide-react";
+import api from "../lib/api";
 
 // Counter Hook
 function useCounter(end: number, duration: number = 2000) {
@@ -31,7 +32,35 @@ function useCounter(end: number, duration: number = 2000) {
 export default function Home() {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  
+  // Dynamic Data State
+  const [services, setServices] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Carousel State
+  const [serviceIndex, setServiceIndex] = useState(0);
+  const [projectIndex, setProjectIndex] = useState(0);
+
+  useEffect(() => {
+    setMounted(true);
+    // Fetch data
+    const fetchData = async () => {
+      try {
+        const [sRes, pRes] = await Promise.all([
+          api.get("/services").catch(() => ({ data: [] })),
+          api.get("/projects").catch(() => ({ data: [] }))
+        ]);
+        setServices(sRes.data.slice(0, 4)); // Get up to 4 services
+        setProjects(pRes.data.slice(0, 4)); // Get up to 4 projects
+      } catch (err) {
+        console.error("Error fetching homepage data:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
   const projectsRef = useCounter(120);
   const citiesRef = useCounter(25);
   const yearsRef = useCounter(15);
@@ -50,31 +79,6 @@ export default function Home() {
   const itemFadeUp = {
     hidden: { opacity: 0, y: 30 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
-
-  const FeaturedProjects = () => {
-    const projects = [
-      { title: "Faisalabad Tower Upgrade", img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80", type: "Internet Tower", city: "Faisalabad", year: "2025" },
-      { title: "Rural Solar Connectivity", img: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&q=80", type: "Solar Internet", city: "Sialkot", year: "2024" },
-      { title: "Karachi FM Link", img: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=600&q=80", type: "FM Radio", city: "Karachi", year: "2023" }
-    ];
-
-    return (
-      <div className="grid gap-6 md:grid-cols-3">
-        {projects.map((project, idx) => (
-          <div key={idx} className="img-overlay glass-card group overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.18)]">
-            <div className="relative h-52 sm:h-56 md:h-64 overflow-hidden">
-              <img src={project.img} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-            </div>
-            <div className="p-5 sm:p-6">
-              <span className="inline-flex items-center rounded-full bg-[var(--green)]/15 text-[var(--green)] text-[0.65rem] sm:text-xs uppercase tracking-[0.24em] font-semibold px-3 py-1 mb-3">{project.type}</span>
-              <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 leading-snug">{project.title}</h3>
-              <p className="text-white/70 text-sm sm:text-base flex items-center gap-2"><MapPin size={14} />{project.city} • {project.year}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
   };
 
   return (
@@ -316,49 +320,69 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. SERVICES OVERVIEW */}
+      {/* 3. SERVICES OVERVIEW (Dynamic Carousel) */}
       <section className="relative py-20 sm:py-28 overflow-hidden bg-[#060D1E]">
-        {/* Subtle Tech Pattern Background */}
         <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1920&q=80')", backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' }}></div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#060D1E] via-transparent to-[#060D1E]"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-16 relative z-20">
-            <h2 className="section-title mb-4 !text-white drop-shadow-lg">What We Do</h2>
-            <p className="section-subtitle mx-auto !text-gray-200 drop-shadow-md">End-to-end services for connectivity infrastructure.</p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 relative z-20 gap-4">
+            <div className="text-left">
+              <h2 className="section-title mb-2 !text-white drop-shadow-lg">What We Do</h2>
+              <p className="section-subtitle !text-gray-200 drop-shadow-md mb-0">End-to-end services for connectivity infrastructure.</p>
+            </div>
+            
+            {/* Navigation Arrows */}
+            {services.length > 0 && (
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setServiceIndex(prev => Math.max(0, prev - 1))}
+                  disabled={serviceIndex === 0}
+                  className="w-12 h-12 rounded-full border border-gray-700 bg-[#111827] flex items-center justify-center text-white hover:bg-gray-800 disabled:opacity-50 transition"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button 
+                  onClick={() => setServiceIndex(prev => Math.min(services.length - 1, prev + 1))}
+                  disabled={serviceIndex >= services.length - 1}
+                  className="w-12 h-12 rounded-full border border-gray-700 bg-[#111827] flex items-center justify-center text-white hover:bg-gray-800 disabled:opacity-50 transition"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </div>
+            )}
           </div>
 
-        <motion.div 
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {[
-            { icon: Radio, title: "Internet Towers", img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80", desc: "Complete site surveys, erection & commissioning." },
-            { icon: Radio, title: "FM Radio", img: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=600&q=80", desc: "Studio-to-transmitter links and broadcast setup." },
-            { icon: Sun, title: "Solar Solutions", img: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=80", desc: "Off-grid power systems for remote sites." },
-            { icon: Wrench, title: "Maintenance", img: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=80", desc: "Painting, earthing, & preventive maintenance." }
-          ].map((service, i) => (
-            <motion.div key={i} variants={itemFadeUp} className="glass-card overflow-hidden group">
-              <div className="h-40 md:h-48 overflow-hidden relative">
-                <img src={service.img} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-
-                <div className="absolute bottom-4 left-4 w-10 h-10 rounded-full bg-[var(--green)] flex items-center justify-center text-[var(--navy-deep)]">
-                  <service.icon size={20} />
-                </div>
+          {isLoading ? (
+             <div className="text-center py-10 text-gray-400">Loading services...</div>
+          ) : services.length === 0 ? (
+             <div className="text-center py-10 text-gray-400">No services found.</div>
+          ) : (
+            <div className="relative overflow-hidden w-full">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(calc(-${serviceIndex * 100}% - ${serviceIndex * 1.5}rem))` }}
+              >
+                {services.map((service, i) => (
+                  <Link href="/services" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] shrink-0 glass-card overflow-hidden group cursor-pointer block mr-6">
+                    <div className="h-40 md:h-48 overflow-hidden relative">
+                      <img src={service.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      <div className="absolute bottom-4 left-4 w-10 h-10 rounded-full bg-[var(--green)] flex items-center justify-center text-[var(--navy-deep)]">
+                        <Wrench size={20} />
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold mb-2 text-white">{service.title}</h3>
+                      <p className="text-gray-400 text-sm mb-6 line-clamp-2">{service.description}</p>
+                      <div className="text-[var(--green)] font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Learn More <span>→</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                <p className="text-[var(--text-secondary)] text-sm mb-6">{service.desc}</p>
-                <Link href="/services" className="text-[var(--green)] font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
-                  Learn More <span>→</span>
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -386,19 +410,66 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. FEATURED PROJECTS */}
+      {/* 5. FEATURED PROJECTS (Dynamic Carousel) */}
       <section className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-8">
-          <div className="text-center lg:text-left">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div className="text-left">
             <h2 className="mb-3 font-extrabold tracking-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight text-[var(--text-primary)] dark:text-white">Featured Projects</h2>
-            <p className="text-[var(--text-secondary)] text-sm sm:text-base md:text-lg max-w-2xl mx-auto lg:mx-0">A glimpse into our nationwide infrastructure rollouts.</p>
+            <p className="text-[var(--text-secondary)] text-sm sm:text-base md:text-lg max-w-2xl">A glimpse into our nationwide infrastructure rollouts.</p>
           </div>
-          <div className="w-full sm:w-auto max-w-xs mx-auto lg:mx-0">
-            <Link href="/projects" className="block bg-[var(--green)] text-white px-6 py-3 rounded-xl shadow-lg hover:brightness-95 transition w-full text-center text-sm sm:text-base">View All Projects</Link>
+          
+          <div className="flex items-center gap-4">
+            {/* Navigation Arrows */}
+            {projects.length > 0 && (
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setProjectIndex(prev => Math.max(0, prev - 1))}
+                  disabled={projectIndex === 0}
+                  className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button 
+                  onClick={() => setProjectIndex(prev => Math.min(projects.length - 1, prev + 1))}
+                  disabled={projectIndex >= projects.length - 1}
+                  className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </div>
+            )}
+            <Link href="/projects" className="hidden sm:block bg-[var(--green)] text-white px-6 py-3 rounded-xl shadow-lg hover:brightness-95 transition text-center text-sm sm:text-base">View All</Link>
           </div>
         </div>
 
-        <FeaturedProjects />
+        {isLoading ? (
+           <div className="text-center py-10 text-gray-500">Loading projects...</div>
+        ) : projects.length === 0 ? (
+           <div className="text-center py-10 text-gray-500">No projects found.</div>
+        ) : (
+          <div className="relative overflow-hidden w-full pb-8">
+            <div 
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(calc(-${projectIndex * 100}% - ${projectIndex * 1.5}rem))` }}
+            >
+              {projects.map((project, i) => (
+                <Link href="/projects" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] shrink-0 img-overlay glass-card group overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.18)] block mr-6">
+                  <div className="relative h-52 sm:h-56 md:h-64 overflow-hidden">
+                    <img src={project.hero_image || project.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  </div>
+                  <div className="p-5 sm:p-6 bg-white dark:bg-transparent">
+                    <span className="inline-flex items-center rounded-full bg-[var(--green)]/15 text-[var(--green)] text-[0.65rem] sm:text-xs uppercase tracking-[0.24em] font-semibold px-3 py-1 mb-3">{project.service_category || "Project"}</span>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2 leading-snug">{project.title}</h3>
+                    <p className="text-gray-600 dark:text-white/70 text-sm sm:text-base flex items-center gap-2"><MapPin size={14} />{project.city || "Pakistan"} • {new Date(project.created_at || Date.now()).getFullYear()}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="mt-6 sm:hidden">
+          <Link href="/projects" className="block w-full bg-[var(--green)] text-white px-6 py-3 rounded-xl shadow-lg hover:brightness-95 transition text-center text-sm">View All Projects</Link>
+        </div>
       </section>
 
       {/* Testimonials removed per request */}
@@ -428,8 +499,8 @@ export default function Home() {
               <div className="w-16 h-16 rounded-full bg-[#0A1F44]/80 flex items-center justify-center text-[var(--green)] mb-6 shadow-[0_0_25px_var(--green-glow)] border border-emerald-500/30">
                 <feature.icon size={28} />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white drop-shadow-md">{feature.title}</h3>
-              <p className="text-gray-300 text-sm drop-shadow-md">{feature.desc}</p>
+              <h3 className="text-xl font-bold mb-3 !text-white drop-shadow-md">{feature.title}</h3>
+              <p className="!text-gray-300 text-sm drop-shadow-md">{feature.desc}</p>
             </motion.div>
           ))}
         </motion.div>
