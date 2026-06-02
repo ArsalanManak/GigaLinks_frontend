@@ -142,8 +142,8 @@ export default function ServicesPage() {
                   )}
 
                   <div>
-                    <Link href={`/get-quote?service=${service.slug || service.id}`} className="btn-primary inline-flex">
-                      Request Quote
+                    <Link href={`/contact?service=${service.slug || service.id}`} className="btn-primary inline-flex">
+                      Contact Us
                     </Link>
                   </div>
                 </div>

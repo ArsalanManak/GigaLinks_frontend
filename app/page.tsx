@@ -297,23 +297,23 @@ export default function Home() {
       <section className="relative py-16 sm:py-20 mt-10 bg-fixed bg-center bg-cover" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=80')" }}>
         <div className="absolute inset-0 bg-[#060D1E]/85"></div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="glass p-6 md:p-10 border-white/10 bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl">
+          <div className="p-6 md:p-10 border border-white/10 bg-[#0A1F44]/60 backdrop-blur-xl rounded-2xl shadow-2xl">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div ref={projectsRef.nodeRef} className="min-w-0">
-                <div className="stat-number text-5xl md:text-6xl text-white font-black mb-2 drop-shadow-lg">{projectsRef.count}+</div>
-                <div className="stat-label break-words text-emerald-400 font-bold tracking-widest text-sm">Projects Completed</div>
+                <div className="stat-number text-5xl md:text-6xl !text-white font-black mb-2 drop-shadow-lg">{projectsRef.count}+</div>
+                <div className="stat-label break-words !text-emerald-400 font-bold tracking-widest text-sm">Projects Completed</div>
               </div>
               <div ref={citiesRef.nodeRef} className="min-w-0">
-                <div className="stat-number text-5xl md:text-6xl text-white font-black mb-2 drop-shadow-lg">{citiesRef.count}+</div>
-                <div className="stat-label break-words text-emerald-400 font-bold tracking-widest text-sm">Cities Covered</div>
+                <div className="stat-number text-5xl md:text-6xl !text-white font-black mb-2 drop-shadow-lg">{citiesRef.count}+</div>
+                <div className="stat-label break-words !text-emerald-400 font-bold tracking-widest text-sm">Cities Covered</div>
               </div>
               <div ref={yearsRef.nodeRef} className="min-w-0">
-                <div className="stat-number text-5xl md:text-6xl text-white font-black mb-2 drop-shadow-lg">{yearsRef.count}</div>
-                <div className="stat-label break-words text-emerald-400 font-bold tracking-widest text-sm">Years Experience</div>
+                <div className="stat-number text-5xl md:text-6xl !text-white font-black mb-2 drop-shadow-lg">{yearsRef.count}</div>
+                <div className="stat-label break-words !text-emerald-400 font-bold tracking-widest text-sm">Years Experience</div>
               </div>
               <div ref={satisfactionRef.nodeRef} className="min-w-0">
-                <div className="stat-number text-5xl md:text-6xl text-white font-black mb-2 drop-shadow-lg">{satisfactionRef.count}%</div>
-                <div className="stat-label break-words text-emerald-400 font-bold tracking-widest text-sm">Client Satisfaction</div>
+                <div className="stat-number text-5xl md:text-6xl !text-white font-black mb-2 drop-shadow-lg">{satisfactionRef.count}%</div>
+                <div className="stat-label break-words !text-emerald-400 font-bold tracking-widest text-sm">Client Satisfaction</div>
               </div>
             </div>
           </div>
@@ -364,7 +364,7 @@ export default function Home() {
                 style={{ transform: `translateX(calc(-${serviceIndex * 100}% - ${serviceIndex * 1.5}rem))` }}
               >
                 {services.map((service, i) => (
-                  <Link href="/services" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] shrink-0 glass-card overflow-hidden group cursor-pointer block mr-6">
+                  <Link href="/services" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] shrink-0 bg-[#0A1F44]/60 border border-white/10 hover:bg-[#0A1F44]/80 backdrop-blur-xl overflow-hidden group cursor-pointer block mr-6 rounded-2xl transition-all shadow-xl hover:-translate-y-1">
                     <div className="h-40 md:h-48 overflow-hidden relative">
                       <img src={service.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       <div className="absolute bottom-4 left-4 w-10 h-10 rounded-full bg-[var(--green)] flex items-center justify-center text-[var(--navy-deep)]">
@@ -372,8 +372,8 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="p-6">
-                      <h3 className="text-xl font-bold mb-2 text-white">{service.title}</h3>
-                      <p className="text-gray-400 text-sm mb-6 line-clamp-2">{service.description}</p>
+                      <h3 className="text-xl font-bold mb-2 !text-white">{service.title}</h3>
+                      <p className="!text-gray-300 text-sm mb-6 line-clamp-2">{service.description}</p>
                       <div className="text-[var(--green)] font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
                         Learn More <span>→</span>
                       </div>
@@ -453,14 +453,14 @@ export default function Home() {
               style={{ transform: `translateX(calc(-${projectIndex * 100}% - ${projectIndex * 1.5}rem))` }}
             >
               {projects.map((project, i) => (
-                <Link href="/projects" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] shrink-0 img-overlay glass-card group overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.18)] block mr-6">
+                <Link href="/projects" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] shrink-0 glass-card group overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.18)] block mr-6">
                   <div className="relative h-52 sm:h-56 md:h-64 overflow-hidden">
                     <img src={project.hero_image || project.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   </div>
-                  <div className="p-5 sm:p-6 bg-white dark:bg-transparent">
+                  <div className="p-5 sm:p-6 relative z-10 bg-transparent">
                     <span className="inline-flex items-center rounded-full bg-[var(--green)]/15 text-[var(--green)] text-[0.65rem] sm:text-xs uppercase tracking-[0.24em] font-semibold px-3 py-1 mb-3">{project.service_category || "Project"}</span>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2 leading-snug">{project.title}</h3>
-                    <p className="text-gray-600 dark:text-white/70 text-sm sm:text-base flex items-center gap-2"><MapPin size={14} />{project.city || "Pakistan"} • {new Date(project.created_at || Date.now()).getFullYear()}</p>
+                    <h3 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)] mb-2 leading-snug">{project.title}</h3>
+                    <p className="text-[var(--text-secondary)] text-sm sm:text-base flex items-center gap-2"><MapPin size={14} />{project.city || "Pakistan"} • {new Date(project.created_at || Date.now()).getFullYear()}</p>
                   </div>
                 </Link>
               ))}
