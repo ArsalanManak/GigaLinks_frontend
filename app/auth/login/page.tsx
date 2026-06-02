@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "../../../lib/auth";
-import { Eye, EyeOff, LogIn, Shield } from "lucide-react";
+import Link from "next/link";
+import { Eye, EyeOff, LogIn, Shield, ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -27,7 +28,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0A0F1C] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0A0F1C] px-4 relative">
+      <Link href="/" className="absolute top-6 left-4 md:left-8 flex items-center gap-2 text-gray-400 hover:text-white bg-[#111827] hover:bg-[#1F2937] px-4 py-2.5 rounded-xl border border-gray-800 transition shadow-lg">
+        <ArrowLeft size={20} />
+        <span className="font-medium">Back to Home</span>
+      </Link>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
