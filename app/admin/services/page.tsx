@@ -4,11 +4,16 @@ import { useEffect, useState } from "react";
 import api from "../../../lib/api";
 import { Plus, Pencil, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import type { Service } from "../../../types";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 export default function AdminServices() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+
+  // Modal States
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const fetchServices = async () => {
     try {
@@ -23,14 +28,20 @@ export default function AdminServices() {
 
   useEffect(() => { fetchServices(); }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this service?")) return;
+  const confirmDelete = (id: string) => {
+    setConfirmDeleteId(id);
+  };
+
+  const executeDelete = async () => {
+    if (!confirmDeleteId) return;
+    const id = confirmDeleteId;
+    setConfirmDeleteId(null);
     setDeleting(id);
     try {
       await api.delete(`/services/${id}`);
       setServices(services.filter(s => s.id !== id));
     } catch (err) {
-      alert("Failed to delete service");
+      setErrorMsg("Failed to delete service");
     } finally {
       setDeleting(null);
     }
@@ -103,7 +114,7 @@ export default function AdminServices() {
                       <Link href={`/admin/services/edit/${service.id}`} className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-emerald-400 transition">
                         <Pencil size={16} />
                       </Link>
-                      <button onClick={() => handleDelete(service.id!)} disabled={deleting === service.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
+                      <button onClick={() => confirmDelete(service.id!)} disabled={deleting === service.id} className="p-2 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition disabled:opacity-50">
                         {deleting === service.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                       </button>
                     </div>
@@ -114,6 +125,26 @@ export default function AdminServices() {
           </table>
         </div>
       )}
+
+      {/* Custom Modals */}
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        title="Delete Service"
+        message="Are you sure you want to delete this service? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={executeDelete}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
+
+      <ConfirmModal
+        isOpen={!!errorMsg}
+        title="Error"
+        message={errorMsg || ""}
+        confirmText="Okay"
+        isDanger={true}
+        onConfirm={() => setErrorMsg(null)}
+        onCancel={() => setErrorMsg(null)}
+      />
     </div>
   );
 }

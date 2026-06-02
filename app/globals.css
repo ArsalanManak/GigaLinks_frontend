@@ -52,27 +52,27 @@
   --green-glow: rgba(0, 230, 118, 0.4);
 }
 
-:root.light .text-white:not(.img-overlay *) {
+:root.light .text-white:not(.img-overlay *):not(.admin-panel *) {
   color: var(--text-primary) !important;
 }
 
-:root.light .bg-white:not(.img-overlay *) {
+:root.light .bg-white:not(.img-overlay *):not(.admin-panel *) {
   background-color: var(--navy-deep) !important;
 }
 
-:root.light .text-white\/70:not(.img-overlay *) {
+:root.light .text-white\/70:not(.img-overlay *):not(.admin-panel *) {
   color: var(--text-secondary) !important;
 }
 
-:root.light .text-white\/90:not(.img-overlay *) {
+:root.light .text-white\/90:not(.img-overlay *):not(.admin-panel *) {
   color: var(--text-primary) !important;
 }
 
-:root.light .border-white\/10 {
+:root.light .border-white\/10:not(.admin-panel *) {
   border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-:root.light .border-white\/20 {
+:root.light .border-white\/20:not(.admin-panel *) {
   border-color: rgba(0, 0, 0, 0.2) !important;
 }
 

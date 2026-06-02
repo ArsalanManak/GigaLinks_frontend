@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../../../../lib/api";
-import { ArrowLeft, Save, Plus, X, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Plus, X, Loader2, UploadCloud } from "lucide-react";
 import Link from "next/link";
+import ConfirmModal from "../../../../components/ui/ConfirmModal";
 
 export default function CreateProject() {
   const router = useRouter();
@@ -17,12 +18,25 @@ export default function CreateProject() {
     featured: false,
   });
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [newUrl, setNewUrl] = useState("");
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const addImageUrl = () => {
-    if (newUrl.trim()) {
-      setImageUrls([...imageUrls, newUrl.trim()]);
-      setNewUrl("");
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    setUploadingMedia(true);
+    try {
+      const res = await api.post("/media/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      setImageUrls([...imageUrls, res.data.url]);
+    } catch (err: any) {
+      setErrorMsg(err?.response?.data?.detail || "Upload failed");
+    } finally {
+      setUploadingMedia(false);
+      e.target.value = '';
     }
   };
 
@@ -41,7 +55,7 @@ export default function CreateProject() {
       });
       router.push("/admin/projects");
     } catch (err: any) {
-      alert(err?.response?.data?.detail || "Failed to create project");
+      setErrorMsg(err?.response?.data?.detail || "Failed to create project");
     } finally {
       setLoading(false);
     }
@@ -87,12 +101,15 @@ export default function CreateProject() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Cloudinary Image URLs (optional)</label>
-          <div className="flex gap-2 mb-3">
-            <input value={newUrl} onChange={(e) => setNewUrl(e.target.value)} className="flex-1 bg-[#1F2937] border border-gray-700 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition placeholder-gray-500" placeholder="Paste Cloudinary image URL..." onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addImageUrl(); } }} />
-            <button type="button" onClick={addImageUrl} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 rounded-xl hover:bg-emerald-500/20 transition">
-              <Plus size={20} />
-            </button>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Project Images (Upload to Cloudinary)</label>
+          <div className="flex gap-4 mb-4">
+            <div className="relative">
+              <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploadingMedia} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" />
+              <div className={`bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-xl flex items-center gap-2 transition ${uploadingMedia ? 'opacity-50' : 'hover:bg-emerald-500/20'}`}>
+                {uploadingMedia ? <Loader2 size={20} className="animate-spin" /> : <UploadCloud size={20} />}
+                <span className="font-medium">{uploadingMedia ? 'Uploading...' : 'Upload Image'}</span>
+              </div>
+            </div>
           </div>
           {imageUrls.length > 0 && (
             <div className="space-y-2">
@@ -122,6 +139,16 @@ export default function CreateProject() {
           <Link href="/admin/projects" className="text-gray-400 hover:text-white transition">Cancel</Link>
         </div>
       </form>
+
+      <ConfirmModal
+        isOpen={!!errorMsg}
+        title="Error"
+        message={errorMsg || ""}
+        confirmText="Okay"
+        isDanger={true}
+        onConfirm={() => setErrorMsg(null)}
+        onCancel={() => setErrorMsg(null)}
+      />
     </div>
   );
 }

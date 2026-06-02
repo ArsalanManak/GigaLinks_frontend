@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Radio, Sun, Wrench, CheckCircle, Play, Loader2 } from "lucide-react";
+import { Radio, Sun, Wrench, CheckCircle, Play, Loader2, ZoomIn } from "lucide-react";
 import api from "../../lib/api";
+import MediaModal from "../../components/ui/MediaModal";
 
 const iconMap: Record<string, any> = {
   Radio,
@@ -64,6 +65,12 @@ export default function ServicesPage() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Modal State
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMediaUrl, setModalMediaUrl] = useState<string | null>(null);
+  const [modalIsVideo, setModalIsVideo] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+
   const fadeUp = {
     hidden: { opacity: 0, y: 40 },
     show: { opacity: 1, y: 0, transition: { duration: 0.8 } }
@@ -81,6 +88,13 @@ export default function ServicesPage() {
       }
     })();
   }, []);
+
+  const openModal = (url: string, isVideo: boolean, title: string) => {
+    setModalMediaUrl(url);
+    setModalIsVideo(isVideo);
+    setModalTitle(title);
+    setModalOpen(true);
+  };
 
   return (
     <div className="flex flex-col min-h-screen pt-24 pb-20">
@@ -122,21 +136,31 @@ export default function ServicesPage() {
                 variants={fadeUp}
                 className={`flex flex-col ${idx % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 items-center glass-card p-6 lg:p-10`}
               >
-                {/* Image / Video */}
-                <div className="w-full lg:w-1/2 space-y-4">
-                  <div className="h-[300px] lg:h-[400px] relative rounded-[var(--radius)] overflow-hidden">
-                    <img src={img} alt={service.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#060D1E]/60 to-transparent"></div>
-                    <div className="absolute bottom-6 left-6 w-14 h-14 rounded-full bg-[var(--green)] text-[var(--navy-deep)] flex items-center justify-center">
-                      <IconComponent size={28} />
+                {/* Image / Video Preview */}
+                <div 
+                  className="w-full lg:w-1/2 relative cursor-pointer group"
+                  onClick={() => embedUrl ? openModal(embedUrl, true, service.title) : openModal(img, false, service.title)}
+                >
+                  {embedUrl ? (
+                    <div className="h-[300px] lg:h-[400px] relative rounded-[var(--radius)] overflow-hidden w-full shadow-lg">
+                      <iframe src={embedUrl} title={service.title} className="w-full h-full border-0 pointer-events-none" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                     </div>
-                  </div>
-                  
-                  {embedUrl && (
-                    <div className="video-wrapper">
-                      <iframe src={embedUrl} title={service.title} allowFullScreen></iframe>
+                  ) : (
+                    <div className="h-[300px] lg:h-[400px] relative rounded-[var(--radius)] overflow-hidden shadow-lg">
+                      <img src={img} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#060D1E]/80 to-transparent pointer-events-none"></div>
+                      <div className="absolute bottom-6 left-6 w-14 h-14 rounded-full bg-[var(--green)] text-[var(--navy-deep)] flex items-center justify-center shadow-lg">
+                        <IconComponent size={28} />
+                      </div>
                     </div>
                   )}
+
+                  {/* Hover Play/Zoom Icon */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                    <div className="bg-[var(--green)]/90 text-[var(--navy-deep)] p-4 rounded-full shadow-lg transform group-hover:scale-110 transition-transform">
+                      {embedUrl ? <Play fill="currentColor" size={32} className="ml-1" /> : <ZoomIn size={32} />}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Content */}
@@ -168,6 +192,14 @@ export default function ServicesPage() {
           })
         )}
       </section>
+
+      <MediaModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        mediaUrl={modalMediaUrl}
+        isVideo={modalIsVideo}
+        title={modalTitle}
+      />
     </div>
   );
 }
