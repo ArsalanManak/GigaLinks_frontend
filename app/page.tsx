@@ -38,9 +38,9 @@ export default function Home() {
   const [projects, setProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Carousel State
-  const [serviceIndex, setServiceIndex] = useState(0);
-  const [projectIndex, setProjectIndex] = useState(0);
+  // Carousel State (page-based, 4 items per page)
+  const [servicePage, setServicePage] = useState(0);
+  const [projectPage, setProjectPage] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -51,8 +51,8 @@ export default function Home() {
           api.get("/services").catch(() => ({ data: [] })),
           api.get("/projects").catch(() => ({ data: [] }))
         ]);
-        setServices(sRes.data.slice(0, 4)); // Get up to 4 services
-        setProjects(pRes.data.slice(0, 4)); // Get up to 4 projects
+        setServices(sRes.data); // Get all services
+        setProjects(pRes.data); // Get all projects
       } catch (err) {
         console.error("Error fetching homepage data:", err);
       } finally {
@@ -323,64 +323,114 @@ export default function Home() {
       {/* 3. SERVICES OVERVIEW (Dynamic Carousel) */}
       <section className="relative py-20 sm:py-28 overflow-hidden bg-[#060D1E]">
         <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1920&q=80')", backgroundSize: 'cover', backgroundAttachment: 'fixed', backgroundPosition: 'center' }}></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#060D1E] via-transparent to-[#060D1E]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#060D1E] via-transparent to-[#060D1E] pointer-events-none"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 relative z-20 gap-4">
-            <div className="text-left">
-              <h2 className="section-title mb-2 !text-white drop-shadow-lg">What We Do</h2>
-              <p className="section-subtitle !text-gray-200 drop-shadow-md mb-0">End-to-end services for connectivity infrastructure.</p>
-            </div>
-            
-            {/* Navigation Arrows */}
-            {services.length > 0 && (
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setServiceIndex(prev => Math.max(0, prev - 1))}
-                  disabled={serviceIndex === 0}
-                  className="w-12 h-12 rounded-full border border-gray-700 bg-[#111827] flex items-center justify-center text-white hover:bg-gray-800 disabled:opacity-50 transition"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-                <button 
-                  onClick={() => setServiceIndex(prev => Math.min(services.length - 1, prev + 1))}
-                  disabled={serviceIndex >= services.length - 1}
-                  className="w-12 h-12 rounded-full border border-gray-700 bg-[#111827] flex items-center justify-center text-white hover:bg-gray-800 disabled:opacity-50 transition"
-                >
-                  <ChevronRight size={24} />
-                </button>
-              </div>
-            )}
+          <div className="text-center mb-12 relative z-20">
+            <h2 className="section-title mb-3 !text-white drop-shadow-lg text-3xl sm:text-4xl md:text-5xl">What We Do</h2>
+            <p className="section-subtitle !text-gray-300 drop-shadow-md mx-auto">End-to-end services for connectivity infrastructure.</p>
           </div>
 
           {isLoading ? (
              <div className="text-center py-10 text-gray-400">Loading services...</div>
           ) : services.length === 0 ? (
              <div className="text-center py-10 text-gray-400">No services found.</div>
-          ) : (
-            <div className="relative overflow-hidden w-full">
-              <div 
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(calc(-${serviceIndex * 100}% - ${serviceIndex * 1.5}rem))` }}
-              >
-                {services.map((service, i) => (
-                  <Link href="/services" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] shrink-0 bg-[#0A1F44]/60 border border-white/10 hover:bg-[#0A1F44]/80 backdrop-blur-xl overflow-hidden group cursor-pointer block mr-6 rounded-2xl transition-all shadow-xl hover:-translate-y-1">
-                    <div className="h-40 md:h-48 overflow-hidden relative">
-                      <img src={service.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                      <div className="absolute bottom-4 left-4 w-10 h-10 rounded-full bg-[var(--green)] flex items-center justify-center text-[var(--navy-deep)]">
-                        <Wrench size={20} />
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold mb-2 !text-white">{service.title}</h3>
-                      <p className="!text-gray-300 text-sm mb-6 line-clamp-2">{service.description}</p>
-                      <div className="text-[var(--green)] font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
-                        Learn More <span>→</span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+          ) : (() => {
+            const perPage = 4;
+            const totalServicePages = Math.ceil(services.length / perPage);
+            const currentServices = services.slice(servicePage * perPage, servicePage * perPage + perPage);
+            const canGoPrev = servicePage > 0;
+            const canGoNext = servicePage < totalServicePages - 1;
+            return (
+              <>
+                {/* Mobile: Top arrows */}
+                <div className="flex md:hidden justify-center gap-4 mb-6">
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoPrev) setServicePage(p => p - 1); }}
+                    disabled={!canGoPrev}
+                    className={`z-50 w-14 h-14 rounded-full flex items-center justify-center !text-white transition-all duration-300 shadow-xl ${canGoPrev ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronLeft size={28} />
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoNext) setServicePage(p => p + 1); }}
+                    disabled={!canGoNext}
+                    className={`z-50 w-14 h-14 rounded-full flex items-center justify-center !text-white transition-all duration-300 shadow-xl ${canGoNext ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronRight size={28} />
+                  </button>
+                </div>
+
+                {/* Desktop: Arrows on sides + Cards */}
+                <div className="flex items-center gap-4 md:gap-6">
+                  {/* Left Arrow - Desktop */}
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoPrev) setServicePage(p => p - 1); }}
+                    disabled={!canGoPrev}
+                    className={`hidden md:flex z-50 shrink-0 w-16 h-16 rounded-full items-center justify-center !text-white transition-all duration-300 shadow-2xl ${canGoPrev ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronLeft size={32} />
+                  </button>
+
+                  {/* Cards Grid */}
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    {currentServices.map((service: any, i: number) => (
+                      <Link href="/services" key={`svc-${servicePage}-${i}`}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: i * 0.1 }}
+                          className="bg-[#0A1F44]/70 border border-white/10 hover:border-emerald-500/30 backdrop-blur-xl overflow-hidden group cursor-pointer rounded-2xl transition-all duration-500 shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-2"
+                        >
+                          <div className="h-40 md:h-48 overflow-hidden relative">
+                            <img src={service.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#060D1E]/60 to-transparent"></div>
+                            <div className="absolute bottom-4 left-4 w-10 h-10 rounded-full bg-[var(--green)] flex items-center justify-center text-[var(--navy-deep)] shadow-lg shadow-emerald-500/30">
+                              <Wrench size={20} />
+                            </div>
+                          </div>
+                          <div className="p-5 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-bold mb-2 !text-white truncate">{service.title}</h3>
+                            <p className="!text-gray-300 text-sm mb-4 line-clamp-2">{service.description}</p>
+                            <div className="text-[var(--green)] font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                              Learn More <span className="text-lg">→</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  {/* Right Arrow - Desktop */}
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoNext) setServicePage(p => p + 1); }}
+                    disabled={!canGoNext}
+                    className={`hidden md:flex z-50 shrink-0 w-16 h-16 rounded-full items-center justify-center !text-white transition-all duration-300 shadow-2xl ${canGoNext ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronRight size={32} />
+                  </button>
+                </div>
+              </>
+            );
+          })()}
+
+          {/* Page Dots */}
+          {services.length > 4 && (
+            <div className="flex justify-center gap-2 mt-8">
+              {Array.from({ length: Math.ceil(services.length / 4) }).map((_, i) => (
+                <button
+                  type="button"
+                  key={i}
+                  onClick={() => setServicePage(i)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    i === servicePage ? 'bg-emerald-400 w-8 shadow-lg shadow-emerald-500/30' : 'bg-white/20 hover:bg-white/40 w-2.5'
+                  }`}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -411,64 +461,113 @@ export default function Home() {
       </section>
 
       {/* 5. FEATURED PROJECTS (Dynamic Carousel) */}
-      <section className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-          <div className="text-left">
-            <h2 className="mb-3 font-extrabold tracking-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight text-[var(--text-primary)] dark:text-white">Featured Projects</h2>
-            <p className="text-[var(--text-secondary)] text-sm sm:text-base md:text-lg max-w-2xl">A glimpse into our nationwide infrastructure rollouts.</p>
+      <section className="py-16 sm:py-24 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <h2 className="mb-3 font-extrabold tracking-tight text-3xl sm:text-4xl md:text-5xl leading-tight text-[var(--text-primary)]">Featured Projects</h2>
+            <p className="text-[var(--text-secondary)] text-sm sm:text-base md:text-lg max-w-2xl mx-auto">A glimpse into our nationwide infrastructure rollouts.</p>
           </div>
-          
-          <div className="flex items-center gap-4">
-            {/* Navigation Arrows */}
-            {projects.length > 0 && (
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setProjectIndex(prev => Math.max(0, prev - 1))}
-                  disabled={projectIndex === 0}
-                  className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-                <button 
-                  onClick={() => setProjectIndex(prev => Math.min(projects.length - 1, prev + 1))}
-                  disabled={projectIndex >= projects.length - 1}
-                  className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition"
-                >
-                  <ChevronRight size={24} />
-                </button>
+
+          {isLoading ? (
+             <div className="text-center py-10 text-[var(--text-secondary)]">Loading projects...</div>
+          ) : projects.length === 0 ? (
+             <div className="text-center py-10 text-[var(--text-secondary)]">No projects found.</div>
+          ) : (() => {
+            const perPage = 4;
+            const totalProjectPages = Math.ceil(projects.length / perPage);
+            const currentProjects = projects.slice(projectPage * perPage, projectPage * perPage + perPage);
+            const canGoPrev = projectPage > 0;
+            const canGoNext = projectPage < totalProjectPages - 1;
+            return (
+              <>
+                {/* Mobile: Top arrows */}
+                <div className="flex md:hidden justify-center gap-4 mb-6">
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoPrev) setProjectPage(p => p - 1); }}
+                    disabled={!canGoPrev}
+                    className={`z-50 w-14 h-14 rounded-full flex items-center justify-center !text-white transition-all duration-300 shadow-xl ${canGoPrev ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronLeft size={28} />
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoNext) setProjectPage(p => p + 1); }}
+                    disabled={!canGoNext}
+                    className={`z-50 w-14 h-14 rounded-full flex items-center justify-center !text-white transition-all duration-300 shadow-xl ${canGoNext ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronRight size={28} />
+                  </button>
+                </div>
+
+                {/* Desktop: Arrows on sides + Cards */}
+                <div className="flex items-center gap-4 md:gap-6">
+                  {/* Left Arrow - Desktop */}
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoPrev) setProjectPage(p => p - 1); }}
+                    disabled={!canGoPrev}
+                    className={`hidden md:flex z-50 shrink-0 w-16 h-16 rounded-full items-center justify-center !text-white transition-all duration-300 shadow-2xl ${canGoPrev ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronLeft size={32} />
+                  </button>
+
+                  {/* Cards Grid */}
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    {currentProjects.map((project: any, i: number) => (
+                      <Link href="/projects" key={`prj-${projectPage}-${i}`}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: i * 0.1 }}
+                          className="bg-[var(--surface-card)] border border-[var(--glass-border)] hover:border-[var(--green)]/30 overflow-hidden group cursor-pointer rounded-[20px] transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,230,118,0.08)] hover:-translate-y-2"
+                        >
+                          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden">
+                            <img src={project.hero_image || project.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                          </div>
+                          <div className="p-5 sm:p-6">
+                            <span className="inline-flex items-center rounded-full bg-[var(--green)]/15 text-[var(--green)] text-[0.65rem] sm:text-xs uppercase tracking-[0.2em] font-semibold px-3 py-1 mb-3">{project.service_category || "Project"}</span>
+                            <h3 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)] mb-2 leading-snug truncate">{project.title}</h3>
+                            <p className="text-[var(--text-secondary)] text-sm flex items-center gap-2"><MapPin size={14} />{project.city || "Pakistan"} • {new Date(project.created_at || Date.now()).getFullYear()}</p>
+                          </div>
+                        </motion.div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  {/* Right Arrow - Desktop */}
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoNext) setProjectPage(p => p + 1); }}
+                    disabled={!canGoNext}
+                    className={`hidden md:flex z-50 shrink-0 w-16 h-16 rounded-full items-center justify-center !text-white transition-all duration-300 shadow-2xl ${canGoNext ? '!bg-black hover:!bg-gray-800 cursor-pointer' : '!bg-black/40 !opacity-30 cursor-not-allowed'}`}
+                  >
+                    <ChevronRight size={32} />
+                  </button>
+                </div>
+              </>
+            );
+          })()}
+
+          {/* Page Dots + View All */}
+          <div className="flex flex-col items-center gap-4 mt-8">
+            {projects.length > 4 && (
+              <div className="flex justify-center gap-2">
+                {Array.from({ length: Math.ceil(projects.length / 4) }).map((_, i) => (
+                  <button
+                    type="button"
+                    key={i}
+                    onClick={() => setProjectPage(i)}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      i === projectPage ? 'bg-[var(--green)] w-8 shadow-lg shadow-emerald-500/30' : 'bg-[var(--text-muted)]/40 hover:bg-[var(--text-muted)] w-2.5'
+                    }`}
+                  />
+                ))}
               </div>
             )}
-            <Link href="/projects" className="hidden sm:block bg-[var(--green)] text-white px-6 py-3 rounded-xl shadow-lg hover:brightness-95 transition text-center text-sm sm:text-base">View All</Link>
+            <Link href="/projects" className="bg-[var(--green)] !text-white px-8 py-3 rounded-xl shadow-lg hover:brightness-95 transition text-center text-sm sm:text-base font-semibold">View All Projects</Link>
           </div>
-        </div>
-
-        {isLoading ? (
-           <div className="text-center py-10 text-gray-500">Loading projects...</div>
-        ) : projects.length === 0 ? (
-           <div className="text-center py-10 text-gray-500">No projects found.</div>
-        ) : (
-          <div className="relative overflow-hidden w-full pb-8">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(calc(-${projectIndex * 100}% - ${projectIndex * 1.5}rem))` }}
-            >
-              {projects.map((project, i) => (
-                <Link href="/projects" key={i} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] shrink-0 glass-card group overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.18)] block mr-6">
-                  <div className="relative h-52 sm:h-56 md:h-64 overflow-hidden">
-                    <img src={project.hero_image || project.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  </div>
-                  <div className="p-5 sm:p-6 relative z-10 bg-transparent">
-                    <span className="inline-flex items-center rounded-full bg-[var(--green)]/15 text-[var(--green)] text-[0.65rem] sm:text-xs uppercase tracking-[0.24em] font-semibold px-3 py-1 mb-3">{project.service_category || "Project"}</span>
-                    <h3 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)] mb-2 leading-snug">{project.title}</h3>
-                    <p className="text-[var(--text-secondary)] text-sm sm:text-base flex items-center gap-2"><MapPin size={14} />{project.city || "Pakistan"} • {new Date(project.created_at || Date.now()).getFullYear()}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-        <div className="mt-6 sm:hidden">
-          <Link href="/projects" className="block w-full bg-[var(--green)] text-white px-6 py-3 rounded-xl shadow-lg hover:brightness-95 transition text-center text-sm">View All Projects</Link>
         </div>
       </section>
 

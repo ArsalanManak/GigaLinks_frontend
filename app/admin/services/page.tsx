@@ -18,7 +18,10 @@ export default function AdminServices() {
   const fetchServices = async () => {
     try {
       const res = await api.get("/services");
-      setServices(res.data);
+      const sortedData = [...res.data].sort((a: any, b: any) => {
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+      });
+      setServices(sortedData);
     } catch (err) {
       console.error(err);
     } finally {
