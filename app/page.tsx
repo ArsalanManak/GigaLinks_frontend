@@ -523,7 +523,7 @@ export default function Home() {
                           className="bg-[var(--surface-card)] border border-[var(--glass-border)] hover:border-[var(--green)]/30 overflow-hidden group cursor-pointer rounded-[20px] transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgba(0,230,118,0.08)] hover:-translate-y-2"
                         >
                           <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden">
-                            <img src={project.hero_image || project.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            <img src={project.cloudinary_urls?.[0] || project.hero_image || project.image_url || "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80"} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                           </div>
                           <div className="p-5 sm:p-6">
